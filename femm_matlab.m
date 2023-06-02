@@ -95,7 +95,7 @@ for k = 1:5
             mi_getmaterial('Air');
             SetAir(1000,1000,30);
             SetAir(50,50,30);
-            mi_addmaterial('Coil',1,1,0,k,0,0,0,1,0,0,0,0,0);
+            mi_addmaterial('Coil',1,1,0,-k,0,0,0,1,0,0,0,0,0);
 
             %Set boundary conditions
             mi_addboundprop('boundary',0,0,0,0,0,0,0,0,0,0,0)
@@ -129,8 +129,8 @@ for k = 1:5
             temp_xflux= [];
             for i = 1:3
                 for j= 1:3
-                temp_yflux(i,j) = flux_density{i,j}(1,1);
-                temp_xflux(i,j) = flux_density{i,j}(1,2);
+                temp_yflux(i,j) = flux_density{i,j}(1,2);
+                temp_xflux(i,j) = flux_density{i,j}(1,1);
                 end
             end
             std_y = std2(temp_yflux);
@@ -252,10 +252,10 @@ weights = reshape(weights,[6,16]);
         mi_getmaterial('Air');
         SetAir(1000,1000,30);
         SetAir(50,50,30);
-        mi_addmaterial('1',1,1,0,1,0,0,0,1,0,0,0,0,0);
-        mi_addmaterial('2',1,1,0,2,0,0,0,1,0,0,0,0,0);
-        mi_addmaterial('3',1,1,0,3,0,0,0,1,0,0,0,0,0);
-        mi_addmaterial('4',1,1,0,4,0,0,0,1,0,0,0,0,0);
+        mi_addmaterial('1',1,1,0,-0.1,0,0,0,1,0,0,0,0,0);
+        mi_addmaterial('2',1,1,0,-0.2,0,0,0,1,0,0,0,0,0);
+        mi_addmaterial('3',1,1,0,-0.3,0,0,0,1,0,0,0,0,0);
+        mi_addmaterial('4',1,1,0,-0.4,0,0,0,1,0,0,0,0,0);
 
         %Set boundary conditions
         mi_addboundprop('boundary',0,0,0,0,0,0,0,0,0,0,0)
@@ -272,8 +272,10 @@ weights = reshape(weights,[6,16]);
                    SetAir(325 + 50*i, 25+ 50*j,10);
                 elseif weights(i+1,j+1) == 1
                    SetCoil(325 + 50*i,25 + 50*j,'1');
+                   % SetAir(325 + 50*i, 25+ 50*j,10);
                 elseif weights(i+1,j+1) == 2
                    SetCoil(325 + 50*i,25 + 50*j,'2');
+                   % SetAir(325 + 50*i, 25+ 50*j,10);
                 elseif weights(i+1,j+1) == 3
                    SetCoil(325 + 50*i,25 + 50*j,'3');
                 else
@@ -300,13 +302,13 @@ weights = reshape(weights,[6,16]);
         temp_xflux= [];
         for i = 1:3
             for j= 1:3
-            temp_yflux(i,j) = flux_density{i,j}(1,1);
-            temp_xflux(i,j) = flux_density{i,j}(1,2);
+            temp_yflux(i,j) = flux_density{i,j}(1,2);
+            temp_xflux(i,j) = flux_density{i,j}(1,1);
             end
         end
         std_y = std2(temp_yflux);
         flux_x = sum(temp_xflux,'all');
-        result = - (std_y + flux_x)
+        result = (abs(std_y) + flux_x)
 
 %% Functions
 function Drawpolygon(p)
@@ -352,7 +354,7 @@ end
 function SetCoil(i,j,magnitude)
     mi_addblocklabel(i,j);
     mi_selectlabel(i,j);
-    mi_setblockprop(magnitude,0,10,'None',0,0,1);
+    mi_setblockprop(magnitude,0,1,'None',0,0,1);
     mi_clearselected();
 end
 
